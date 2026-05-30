@@ -1,7 +1,7 @@
 package com.hse.cyber.dao
 
 import com.hse.cyber.config.DBConnection
-import com.hse.cyber.constants.DBQueries
+import com.hse.cyber.constants.DBQueriesUser
 import com.hse.cyber.model.InvalidFormat
 import com.hse.cyber.model.NoDatabaseConnection
 import com.hse.cyber.model.User
@@ -30,10 +30,10 @@ class DAOUser {
         if (!checkUserFields(registerUser)) {
             throw InvalidFormat()
         }
-        connection.prepareCall(DBQueries.REGISTER_USER).use { callableStatement ->
-            callableStatement.setString(1, registerUser.userLogin)
-            callableStatement.setString(2, registerUser.userPassword)
-            callableStatement.setString(3, registerUser.userName)
+        connection.prepareCall(DBQueriesUser.REGISTER_USER).use { callableStatement ->
+            callableStatement.setString(1, registerUser.login)
+            callableStatement.setString(2, registerUser.password)
+            callableStatement.setString(3, registerUser.name)
             callableStatement.setString(4, registerUser.secretWord)
             callableStatement.setBoolean(5, registerUser.isAdmin)
 
@@ -46,9 +46,9 @@ class DAOUser {
             return if (resultSet.next()) {
                 User(
                     id = resultSet.getLong("id"),
-                    userName = resultSet.getString("user_name"),
-                    userLogin = resultSet.getString("user_login"),
-                    userPassword = resultSet.getString("user_password"),
+                    name = resultSet.getString("user_name"),
+                    login = resultSet.getString("user_login"),
+                    password = resultSet.getString("user_password"),
                     secretWord = resultSet.getString("secret_word"),
                     isAdmin = resultSet.getBoolean("is_admin"),
                 ).also {
@@ -66,9 +66,9 @@ class DAOUser {
             throw InvalidFormat()
         }
 
-        connection.prepareCall(DBQueries.AUTHENTICATE_USER).use { callableStatement ->
-            callableStatement.setString(1, userAuth.userLogin)
-            callableStatement.setString(2, userAuth.userPassword)
+        connection.prepareCall(DBQueriesUser.AUTHENTICATE_USER).use { callableStatement ->
+            callableStatement.setString(1, userAuth.login)
+            callableStatement.setString(2, userAuth.password)
 
             callableStatement.registerOutParameter(3, Types.REF_CURSOR)
             callableStatement.execute()
@@ -78,9 +78,9 @@ class DAOUser {
             return if (resultSet.next()) {
                 User(
                     id = resultSet.getLong("id"),
-                    userName = resultSet.getString("user_name"),
-                    userLogin = resultSet.getString("user_login"),
-                    userPassword = resultSet.getString("user_password"),
+                    name = resultSet.getString("user_name"),
+                    login = resultSet.getString("user_login"),
+                    password = resultSet.getString("user_password"),
                     secretWord = resultSet.getString("secret_word"),
                     isAdmin = resultSet.getBoolean("is_admin"),
                 ).also {

@@ -47,8 +47,8 @@ class UserFieldValidator {
         fun checkUserFieldsAuth(user: User?): Boolean {
             var result = false
             user?.let {
-                result = FieldValidator.checkUserLogin(user.userLogin)
-                        && FieldValidator.checkUserPassword(user.userPassword)
+                result = FieldValidator.checkUserLogin(user.login)
+                        && FieldValidator.checkUserPassword(user.password)
             }
             return result
         }
@@ -56,9 +56,9 @@ class UserFieldValidator {
         fun checkUserFields(user: User?): Boolean {
             var result = false
             user?.let { user ->
-                result = FieldValidator.checkUserLogin(user.userLogin)
-                        && FieldValidator.checkUserName(user.userName)
-                        && FieldValidator.checkUserPassword(user.userPassword)
+                result = FieldValidator.checkUserLogin(user.login)
+                        && FieldValidator.checkUserName(user.name)
+                        && FieldValidator.checkUserPassword(user.password)
                         && FieldValidator.checkUserSecretWord(user.secretWord)
             }
             return result

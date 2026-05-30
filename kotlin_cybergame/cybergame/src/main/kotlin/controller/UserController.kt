@@ -48,4 +48,14 @@ class UserController {
             ResponseEntity(Result.failure(f), HttpStatus.SERVICE_UNAVAILABLE)
         }
     }
+
+    @GetMapping("/get")
+    fun getUserById() {
+
+    }
+
+    @GetMapping("/get/list")
+    fun getAllUsers() {
+
+    }
 }
