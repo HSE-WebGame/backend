@@ -1,6 +1,7 @@
 package com.hse.cyber.utills
 
-import com.hse.cyber.model.User
+import com.hse.cyber.model.UserAuth
+import com.hse.cyber.model.UserRegister
 
 internal class FieldValidator {
     companion object {
@@ -44,7 +45,7 @@ internal class FieldValidator {
 
 class UserFieldValidator {
     companion object {
-        fun checkUserFieldsAuth(user: User?): Boolean {
+        fun validateUserFieldsAuth(user: UserAuth?): Boolean {
             var result = false
             user?.let {
                 result = FieldValidator.checkUserLogin(user.login)
@@ -53,7 +54,7 @@ class UserFieldValidator {
             return result
         }
 
-        fun checkUserFields(user: User?): Boolean {
+        fun validateUserFieldsRegister(user: UserRegister?): Boolean {
             var result = false
             user?.let { user ->
                 result = FieldValidator.checkUserLogin(user.login)

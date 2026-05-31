@@ -2,7 +2,7 @@ package com.hse.cyber.dao
 
 import com.hse.cyber.config.DBConnection
 import com.hse.cyber.model.Achievement
-import com.hse.cyber.model.NoDatabaseConnection
+import com.hse.cyber.model.NoDatabaseConnectionException
 import com.hse.cyber.utills.Logger
 import java.sql.Connection
 import java.sql.SQLException
@@ -13,10 +13,10 @@ class DAOAchievement {
 
     init {
         try {
-            connection = DBConnection.getConnection() ?: throw NoDatabaseConnection()
+            connection = DBConnection.getConnection() ?: throw NoDatabaseConnectionException()
         } catch (e: SQLException) {
-            Logger.err("$e")
-            throw NoDatabaseConnection()
+            Logger.err(e)
+            throw NoDatabaseConnectionException()
         }
     }
 
@@ -26,5 +26,9 @@ class DAOAchievement {
 
     fun getAchievementIconByUrlCode(urlCode: String): String {
 
+    }
+
+    private companion object {
+        const val TAG = "DAOAchievement"
     }
 }

@@ -19,6 +19,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:4.0.6")
     // Source: https://mvnrepository.com/artifact/org.postgresql/postgresql
     implementation("org.postgresql:postgresql:42.7.11")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test:4.0.6")
+    testRuntimeOnly("com.h2database:h2")
 }
 
 kotlin {

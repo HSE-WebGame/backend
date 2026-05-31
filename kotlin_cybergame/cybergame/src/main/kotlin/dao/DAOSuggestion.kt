@@ -1,7 +1,7 @@
 package com.hse.cyber.dao
 
 import com.hse.cyber.config.DBConnection
-import com.hse.cyber.model.NoDatabaseConnection
+import com.hse.cyber.model.NoDatabaseConnectionException
 import com.hse.cyber.model.Suggestion
 import com.hse.cyber.model.SuggestionRequest
 import com.hse.cyber.model.Task
@@ -15,10 +15,10 @@ class DAOSuggestion {
 
     init {
         try {
-            connection = DBConnection.getConnection() ?: throw NoDatabaseConnection()
+            connection = DBConnection.getConnection() ?: throw NoDatabaseConnectionException()
         } catch (e: SQLException) {
-            Logger.err("$e")
-            throw NoDatabaseConnection()
+            Logger.err(e)
+            throw NoDatabaseConnectionException()
         }
     }
 
@@ -32,5 +32,9 @@ class DAOSuggestion {
 
     fun deleteSuggestion(suggestId: Long) {
 
+    }
+
+    private companion object {
+        const val TAG = "DAOSuggestion"
     }
 }

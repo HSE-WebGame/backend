@@ -2,94 +2,134 @@ package com.hse.cyber.dao
 
 import com.hse.cyber.config.DBConnection
 import com.hse.cyber.constants.DBQueriesUser
-import com.hse.cyber.model.InvalidFormat
-import com.hse.cyber.model.NoDatabaseConnection
+import com.hse.cyber.model.NoDatabaseConnectionException
 import com.hse.cyber.model.User
-import com.hse.cyber.model.UserNotFoundException
 import com.hse.cyber.utills.Logger
-import com.hse.cyber.utills.UserFieldValidator.Companion.checkUserFields
-import com.hse.cyber.utills.UserFieldValidator.Companion.checkUserFieldsAuth
+import com.hse.cyber.utills.UserFieldValidator.Companion.validateUserFieldsRegister
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
-import java.sql.Types
+import com.hse.cyber.constants.UserFiledName
+import com.hse.cyber.model.DuplicateUserException
+import com.hse.cyber.model.InvalidFormatException
+import com.hse.cyber.model.UnexpectedResultException
+import com.hse.cyber.model.UserAuth
+import com.hse.cyber.model.UserNotFoundException
+import com.hse.cyber.model.UserRegister
+import com.hse.cyber.utills.UserFieldValidator.Companion.validateUserFieldsAuth
 
 class DAOUser {
     private val connection: Connection
 
     init {
         try {
-            connection = DBConnection.getConnection() ?: throw NoDatabaseConnection()
+            connection = DBConnection.getConnection() ?: throw NoDatabaseConnectionException()
         } catch (e: SQLException) {
-            Logger.err("$e")
-            throw NoDatabaseConnection()
+            Logger.err(e)
+            throw NoDatabaseConnectionException()
         }
     }
 
-    fun registerUser(registerUser: User): User {
-        if (!checkUserFields(registerUser)) {
-            throw InvalidFormat()
+    fun registerUser(userRegister: UserRegister): Long {
+        Logger.log(TAG, "registerUser $userRegister")
+        if (!validateUserFieldsRegister(userRegister)) {
+            throw InvalidFormatException()
         }
-        connection.prepareCall(DBQueriesUser.REGISTER_USER).use { callableStatement ->
-            callableStatement.setString(1, registerUser.login)
-            callableStatement.setString(2, registerUser.password)
-            callableStatement.setString(3, registerUser.name)
-            callableStatement.setString(4, registerUser.secretWord)
-            callableStatement.setBoolean(5, registerUser.isAdmin)
-
-
-            callableStatement.registerOutParameter(6, Types.REF_CURSOR)
-            callableStatement.execute()
-
-            val resultSet = callableStatement.getObject(7) as ResultSet
-
-            return if (resultSet.next()) {
-                User(
-                    id = resultSet.getLong("id"),
-                    name = resultSet.getString("user_name"),
-                    login = resultSet.getString("user_login"),
-                    password = resultSet.getString("user_password"),
-                    secretWord = resultSet.getString("secret_word"),
-                    isAdmin = resultSet.getBoolean("is_admin"),
-                ).also {
-                    resultSet.close()
+        try {
+            connection.use { connection ->
+                connection.prepareStatement(DBQueriesUser.REGISTER_USER).use { statement ->
+                    statement.setString(1, userRegister.name)
+                    statement.setString(2, userRegister.login)
+                    statement.setString(3, userRegister.password)
+                    statement.setString(4, userRegister.secretWord)
+                    statement.setBoolean(5, false)
+                    statement.executeQuery().use { resultSet ->
+                        if (resultSet.next()) {
+                            return resultSet.getLong(1)
+                        } else {
+                            throw UnexpectedResultException()
+                        }
+                    }
                 }
-            } else {
-                resultSet.close()
-                throw UserNotFoundException()
             }
+        } catch (e: SQLException) {
+            if (e.sqlState == "23505") {
+                throw DuplicateUserException()
+            }
+            throw e
         }
     }
 
-    fun authenticateUser(userAuth: User): User {
-        if (!checkUserFieldsAuth(userAuth)) {
-            throw InvalidFormat()
+    fun authenticateUser(userAuth: UserAuth): User {
+        Logger.log(TAG, "authenticateUser $userAuth")
+        if (!validateUserFieldsAuth(userAuth)) {
+            throw InvalidFormatException()
         }
-
-        connection.prepareCall(DBQueriesUser.AUTHENTICATE_USER).use { callableStatement ->
-            callableStatement.setString(1, userAuth.login)
-            callableStatement.setString(2, userAuth.password)
-
-            callableStatement.registerOutParameter(3, Types.REF_CURSOR)
-            callableStatement.execute()
-
-            val resultSet = callableStatement.getObject(3) as ResultSet
-
-            return if (resultSet.next()) {
-                User(
-                    id = resultSet.getLong("id"),
-                    name = resultSet.getString("user_name"),
-                    login = resultSet.getString("user_login"),
-                    password = resultSet.getString("user_password"),
-                    secretWord = resultSet.getString("secret_word"),
-                    isAdmin = resultSet.getBoolean("is_admin"),
-                ).also {
-                    resultSet.close()
+        connection.use { connection ->
+            connection.prepareStatement(DBQueriesUser.AUTHENTICATE_USER).use { statement ->
+                statement.setString(1, userAuth.login)
+                statement.setString(2, userAuth.password)
+                statement.executeQuery().use { resultSet ->
+                    if (resultSet.next()) {
+                        val user = mapUser(resultSet)
+                        Logger.log(TAG, "authenticateUser final user: $user")
+                        return user
+                    }
                 }
-            } else {
-                resultSet.close()
-                throw UserNotFoundException()
             }
         }
+        throw UserNotFoundException()
+    }
+
+    fun getUserById(userId: Long): User {
+        Logger.log(TAG, "getUserById $userId")
+        connection.use { connection ->
+            connection.prepareStatement(DBQueriesUser.GET_BY_ID).use { statement ->
+                statement.setLong(1, userId)
+                statement.executeQuery().use { resultSet ->
+                    if (resultSet.next()) {
+                        val user = mapUser(resultSet)
+                        Logger.log(TAG, "getUserById final user: $user")
+                        return user
+                    }
+                }
+            }
+        }
+        throw UserNotFoundException()
+    }
+
+    fun getAllUsers(): List<User> {
+        Logger.log(TAG, "getAllUsers")
+        val users = mutableListOf<User>()
+        connection.use { connection ->
+            connection.prepareStatement(DBQueriesUser.GET_ALL_USERS).use { statement ->
+                statement.executeQuery().use { resultSet ->
+                    while (resultSet.next()) {
+                        val user = mapUser(resultSet)
+                        Logger.log(TAG, "getAllUsers add $user to list")
+                        users.add(user)
+                    }
+                }
+            }
+        }
+        if (users.isEmpty()) {
+            throw UserNotFoundException()
+        }
+        Logger.log(TAG, "getAllUsers final list: $users")
+        return users
+    }
+
+    private fun mapUser(resultSet: ResultSet): User {
+        return User(
+            userId = resultSet.getLong(UserFiledName.USER_ID),
+            name = resultSet.getString(UserFiledName.NAME),
+            login = resultSet.getString(UserFiledName.LOGIN),
+            secretWord = resultSet.getString(UserFiledName.SECRET_WORD),
+            isAdmin = resultSet.getBoolean(UserFiledName.IS_ADMIN),
+        )
+    }
+
+    private companion object {
+        const val TAG = "DAOUser"
     }
 }

@@ -1,10 +1,9 @@
 package com.hse.cyber.model
 
 data class User(
-    val id: Long,
+    val userId: Long,
     val name: String,
     val login: String,
-    val password: String,
     val secretWord: String,
     val isAdmin: Boolean = false,
 )

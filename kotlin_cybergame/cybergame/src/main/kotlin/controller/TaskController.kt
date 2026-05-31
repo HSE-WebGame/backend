@@ -3,6 +3,7 @@ package com.hse.cyber.controller
 import com.hse.cyber.dao.DAOTask
 import com.hse.cyber.model.Task
 import com.hse.cyber.model.TaskRequest
+import com.hse.cyber.utills.Logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -20,26 +21,40 @@ class TaskController {
 
     @GetMapping("/get")
     fun getTaskList(): ResponseEntity<Result<List<Task>>> {
-        return ResponseEntity(Result.success(daoTask.getTaskList()), HttpStatus.OK)
+        val result = daoTask.getTaskList()
+        Logger.log(TAG, result.toString())
+        return ResponseEntity(Result.success(result), HttpStatus.OK)
     }
 
     @GetMapping("/get/solved")
     fun getSolvedTaskList(@RequestBody userId: Long): ResponseEntity<Result<List<Task>>> {
-        return ResponseEntity(Result.success(daoTask.getSolvedTask(userId)), HttpStatus.OK)
+        val result = daoTask.getSolvedTask(userId)
+        Logger.log(TAG, result.toString())
+        return ResponseEntity(Result.success(result), HttpStatus.OK)
     }
 
     @PostMapping("/solve")
     fun solveTask(@RequestBody taskId: Long): ResponseEntity<Result<Unit>> {
-        return ResponseEntity(Result.success(daoTask.solveTask(taskId)), HttpStatus.OK)
+        val result = daoTask.solveTask(taskId)
+        Logger.log(TAG, result.toString())
+        return ResponseEntity(Result.success(result), HttpStatus.OK)
     }
 
     @DeleteMapping("/delete")
     fun deleteTask(@RequestBody taskId: Long): ResponseEntity<Result<Unit>> {
-        return ResponseEntity(Result.success(daoTask.deleteTask(taskId)), HttpStatus.OK)
+        val result = daoTask.deleteTask(taskId)
+        Logger.log(TAG, result.toString())
+        return ResponseEntity(Result.success(result), HttpStatus.OK)
     }
 
     @PostMapping("/create")
     fun createTask(@RequestBody taskRequest: TaskRequest): ResponseEntity<Result<Unit>> {
-        return ResponseEntity(Result.success(daoTask.createTask(taskRequest)), HttpStatus.OK)
+        val result = daoTask.createTask(taskRequest)
+        Logger.log(TAG, result.toString())
+        return ResponseEntity(Result.success(result), HttpStatus.OK)
+    }
+
+    private companion object {
+        const val TAG = "TaskController"
     }
 }

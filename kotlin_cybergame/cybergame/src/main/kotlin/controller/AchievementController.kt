@@ -2,6 +2,7 @@ package com.hse.cyber.controller
 
 import com.hse.cyber.dao.DAOAchievement
 import com.hse.cyber.model.Achievement
+import com.hse.cyber.utills.Logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -17,11 +18,13 @@ class AchievementController {
 
     @GetMapping("/get")
     fun getAchievementListByUserId(@RequestBody userId: Long): ResponseEntity<Result<List<Achievement>>> {
-        return ResponseEntity(Result.success(daoAchievement.getAchievementListByUserId(userId)), HttpStatus.OK)
+        val result = daoAchievement.getAchievementListByUserId(userId)
+        Logger.log(TAG, result.toString())
+        return ResponseEntity(Result.success(result), HttpStatus.OK)
     }
 
     @GetMapping("/{urlCode}/icon.svg")
-    fun getAchievementIconByCode(@PathVariable urlCode: String): ResponseEntity<Result<String>> {
+    fun getAchievementIconByCode(@PathVariable("urlCode") urlCode: String): ResponseEntity<Result<String>> {
         return ResponseEntity
             .ok()
             .contentType(MediaType.valueOf("image/svg+xml"))
@@ -30,5 +33,9 @@ class AchievementController {
                     daoAchievement.getAchievementIconByUrlCode(urlCode)
                 )
             )
+    }
+
+    private companion object {
+        const val TAG = "AchievementController"
     }
 }
