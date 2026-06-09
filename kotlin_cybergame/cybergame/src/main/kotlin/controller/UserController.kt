@@ -19,9 +19,9 @@ import java.sql.SQLException
 
 @RestController
 @RequestMapping("/user")
-class UserController {
-
-    private val daoUser = DAOUser()
+class UserController(
+    private val daoUser: DAOUser
+) {
 
     @GetMapping("/auth")
     fun authenticate(@RequestBody user: UserAuth): ResponseEntity<Result<User>> {

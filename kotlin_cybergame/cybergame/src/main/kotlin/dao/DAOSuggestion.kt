@@ -23,11 +23,11 @@ class DAOSuggestion {
     }
 
     fun getSuggestionList(): List<Suggestion> {
-
+        return emptyList()
     }
 
     fun createSuggestion(suggestionRequest: SuggestionRequest): Task {
-
+        return Task(1,"","",",",",",1)
     }
 
     fun deleteSuggestion(suggestId: Long) {

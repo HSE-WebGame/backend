@@ -1,5 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.spring") version "1.9.25"
+    id("org.springframework.boot") version "3.3.5"
+    id("io.spring.dependency-management") version "1.1.6"
+    application
 }
 
 group = "com.hse.cyber"
@@ -10,17 +14,24 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    // Source: https://mvnrepository.com/artifact/org.springframework/spring-web
-    implementation("org.springframework:spring-web:7.0.7")
-    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
-    implementation("org.springframework.boot:spring-boot-starter-web:4.0.6")
-    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc
-    implementation("org.springframework.boot:spring-boot-starter-jdbc:4.0.6")
-    // Source: https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation("org.postgresql:postgresql:42.7.11")
+    // Spring Boot
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test:4.0.6")
+    // Jackson для Kotlin
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // Kotlin reflection (обязательно для Spring)
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // PostgreSQL
+    runtimeOnly("org.postgresql:postgresql")
+
+    // Тесты — Spring Boot Test уже включает JUnit 5, Mockito, MockMvc
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+
+    // H2 для тестов вместо PostgreSQL
     testRuntimeOnly("com.h2database:h2")
 }
 
@@ -30,4 +41,13 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+//plugins {
+//    kotlin("jvm") version "1.9.0"
+//    application
+//}
+
+application {
+    mainClass.set("com.hse.cyber.MainApplicationKt") // adjust to your actual main class
 }

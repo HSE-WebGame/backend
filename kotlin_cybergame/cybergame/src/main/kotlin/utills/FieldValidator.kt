@@ -7,7 +7,7 @@ internal class FieldValidator {
     companion object {
         fun checkUserPassword(userPassword: String?): Boolean {
             userPassword?.let {
-                if (userPassword.length in 3..9) {
+                if (userPassword.length > 3) {
                     return true
                 }
             }
@@ -16,7 +16,7 @@ internal class FieldValidator {
 
         fun checkUserLogin(userLogin: String?): Boolean {
             userLogin?.let {
-                if (userLogin.length in 3..9) {
+                if (userLogin.length > 3) {
                     return true
                 }
             }
@@ -25,7 +25,7 @@ internal class FieldValidator {
 
         fun checkUserName(userName: String?): Boolean {
             userName?.let {
-                if (userName.length in 3..9) {
+                if (userName.length > 3) {
                     return true
                 }
             }
@@ -34,7 +34,7 @@ internal class FieldValidator {
 
         fun checkUserSecretWord(userSecretWord: String?): Boolean {
             userSecretWord?.let {
-                if (userSecretWord.length in 3..9) {
+                if (userSecretWord.length > 3) {
                     return true
                 }
             }

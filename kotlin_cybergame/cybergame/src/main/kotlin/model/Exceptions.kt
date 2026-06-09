@@ -27,3 +27,18 @@ class UnexpectedResultException: RuntimeException() {
     override val message: String
         get() = "The result was unexpected or null"
 }
+
+class TaskNotFoundException: RuntimeException() {
+    override val message: String
+        get() = "Task not found"
+}
+
+class WrongTaskAnswerException: RuntimeException() {
+    override val message: String
+        get() = "Wrong task answer"
+}
+
+class TaskAlreadySolvedException: RuntimeException() {
+    override val message: String
+        get() = "Task already solved"
+}

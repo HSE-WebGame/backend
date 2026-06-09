@@ -1,9 +1,9 @@
 package com.hse.cyber.constants
 
 object DBParams {
-    const val URL: String = "jdbc:postgresql://localhost:5432/plenka"
+    const val URL: String = "jdbc:postgresql://127.0.0.1:5433/game_db"
 
-    const val NAME: String = "postgres"
+    const val NAME: String = "game_user"
 
-    const val PASSWORD: String = "31631"
+    const val PASSWORD: String = "game_pass"
 }

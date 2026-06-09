@@ -16,3 +16,9 @@ data class TaskRequest(
     val answer: String,
     val points: Int,
 )
+
+data class TaskSolveRequest(
+    val userId: Long,
+    val taskId: Long,
+    val answer: String,
+)
