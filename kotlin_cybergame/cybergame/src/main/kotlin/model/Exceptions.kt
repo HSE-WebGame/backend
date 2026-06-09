@@ -33,6 +33,11 @@ class TaskNotFoundException: RuntimeException() {
         get() = "Task not found"
 }
 
+class SuggestionNotFoundException: RuntimeException() {
+    override val message: String
+        get() = "Suggestion not found"
+}
+
 class WrongTaskAnswerException: RuntimeException() {
     override val message: String
         get() = "Wrong task answer"

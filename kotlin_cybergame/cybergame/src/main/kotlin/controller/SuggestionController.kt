@@ -22,7 +22,7 @@ class SuggestionController {
     }
 
     @PostMapping("/create")
-    fun createSuggestion(@RequestBody suggestionRequest: SuggestionRequest): ResponseEntity<Result<Task>> {
+    fun createSuggestion(@RequestBody suggestionRequest: SuggestionRequest): ResponseEntity<Result<Long>> {
         val result = daoSuggestion.createSuggestion(suggestionRequest)
         Logger.log(TAG, result.toString())
         return ResponseEntity(Result.success(result), HttpStatus.OK)
