@@ -15,15 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.CrossOrigin // new
 import java.sql.SQLException
 
+@CrossOrigin(origins = ["http://localhost:5173"]) // new
 @RestController
 @RequestMapping("/user")
 class UserController(
     private val daoUser: DAOUser
 ) {
 
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     fun authenticate(@RequestBody user: UserAuth): ResponseEntity<Result<User>> {
         return try {
             val result = daoUser.authenticateUser(user)

@@ -8,7 +8,11 @@ import com.hse.cyber.utills.Logger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin // new
+import org.springframework.web.bind.annotation.RestController // new
 
+@RestController // new
+@CrossOrigin(origins = ["http://localhost:5173"]) // new
 @RequestMapping("/suggestion")
 class SuggestionController {
 
