@@ -24,7 +24,7 @@ object AchievementFieldName {
 }
 
 object SuggestionFieldName {
-    const val SUGGESTION_ID = "suggestion_id"
+    const val SUGGESTION_ID = "id"
     const val HEADER = "header"
     const val DESCRIPTION = "description"
     const val ANSWER = "answer"
