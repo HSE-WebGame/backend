@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.CrossOrigin // new
+import org.springframework.web.bind.annotation.RestController // new
 
+@RestController // new
+@CrossOrigin(origins = ["http://localhost:5173"]) // new
 @RequestMapping("/achievement")
 class AchievementController {
 
